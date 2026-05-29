@@ -13,13 +13,6 @@ let controls;
 let mouseX = 0;
 let mouseY = 0;
 
-function randomPastel() {
-    const h = Math.random();
-    const color = new THREE.Color();
-    color.setHSL(h, 0.8, 0.7); //saturation, lightness
-    return color;
-}
-
 let objToRender = 'alien'
 
 const loader = new GLTFLoader();
@@ -69,34 +62,13 @@ if (objToRender == 'alien') {
 //Render scene
 function animate() {
     requestAnimationFrame(animate);
-    //Track mouse movements
     if (object && objToRender == 'alien') {
-        const targetY = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, mouseX * 0.0008));
+        const targetY = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, mouseX * 0.003));
         object.rotation.y += (targetY - object.rotation.y) * 0.05;
-        object.rotation.x += (mouseY * 0.0008 - object.rotation.x) * 0.05;
+        object.rotation.x += (mouseY * 0.003 - object.rotation.x) * 0.05;
     }
     renderer.render(scene, camera);
 }
-
-const raycaster = new THREE.Raycaster();
-const clickMouse = new THREE.Vector2();
-
-//Change color if clicked
-renderer.domElement.addEventListener('click', function(e) {
-    if (!object) return;
-    clickMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-    clickMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-    raycaster.setFromCamera(clickMouse, camera);
-    const hits = raycaster.intersectObject(object, true);
-    if (hits.length > 0) {
-        const newColor = randomPastel();
-        object.traverse(function(child) {
-            if (child.isMesh && child.material.name === 'Plaster') {
-                child.material.color.copy(newColor);
-            }
-        });
-    }
-});
 
 document.onmousemove = function(e) {
     mouseX = e.clientX - window.innerWidth / 2;
